@@ -10,6 +10,8 @@ const Settings      = imports.ui.settings;
 const ModalDialog   = imports.ui.modalDialog;
 const SignalManager = imports.misc.signalManager;
 
+const GLib          = imports.gi.GLib;
+
 let GPaste; // Will be assigned in entry point
 
 let _, GPasteSearchItem, GPasteHistoryItem, GPasteHistoryListItem, GPasteNewItemDialog, GPasteNotInstalledDialog;
@@ -35,6 +37,30 @@ if (typeof require !== 'undefined') {
 // ------------------------------------------------------------------------------------------------------
 
 function main(metadata, orientation, panel_height, instance_id) {
+
+    const gi_search_path = imports.gi.GIRepository.Repository.get_search_path();
+    const env_ld_library_path = GLib.getenv('LD_LIBRARY_PATH').split(':');
+    const env_gi_typelib_path = GLib.getenv('GI_TYPELIB_PATH').split(':');
+    const env_shell = GLib.getenv('SHELL');
+
+    // Do we have gpaste here?
+    debugLog("get_search_path: " + gi_search_path.length);
+    debugLog(gi_search_path);
+
+    // Does this know other variables we set?
+    debugLog("LD_LIBRARY_PATH: " + env_ld_library_path.length);
+    debugLog(env_ld_library_path);
+
+    // Do we have gpaste here? (*2)
+    // Note: It is expected to have env_gi_typelib_path.length <= gi_search_path.length:
+    // https://github.com/search?q=org%3Alinuxmint+prepend_search_path+&type=code
+    debugLog("GI_TYPELIB_PATH: " + env_gi_typelib_path.length);
+    debugLog(env_gi_typelib_path);
+
+    // ???
+    debugLog("SHELL");
+    debugLog(env_shell);
+
     try {
         GPaste = imports.gi.GPaste;
 
@@ -57,7 +83,7 @@ function GPasteFallbackApplet(orientation, panel_height, instance_id) {
 // ------------------------------------------------------------------------------------------------------
 function debugLog(...args) {
    // Un-comment the line blow to enable debug logging
-   // global.log(...args);
+   global.log(...args);
 }
 
 GPasteFallbackApplet.prototype = {
